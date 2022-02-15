@@ -10,7 +10,9 @@ from .database import Base
 class Admin(Base):
     __tablename__ = 'admin'
     id = Column(Integer, primary_key=True)
+    username = Column(String , unique=True)
     email = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
     clients = relationship(
@@ -53,4 +55,4 @@ class Workout(Base):
     video_url = Column(String, nullable=True)
     image_url = Column(String, nullable=True)
     routine_creator = relationship(Routine, back_populates="workouts")
-    admin_id = Column(String, ForeignKey('routine.name'))
+    routine_id = Column(String, ForeignKey('routine.name'))

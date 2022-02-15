@@ -18,6 +18,27 @@ class ClientOut(BaseModel):
         orm_mode = True
 
 
+class AdminOut(BaseModel):
+    id: int
+    email: EmailStr
+    username: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class AdminCreate(BaseModel):
+    email: EmailStr
+    username: str
+    password: str
+
+
+class AdminLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
 class RoutineBase(BaseModel):
     name: str
     created_at: datetime
@@ -64,7 +85,6 @@ class Routine(RoutineBase):
         orm_mode = True
 
 
-
 class RoutineCreate(RoutineBase):
     pass
 
@@ -74,7 +94,6 @@ class RoutineOut(BaseModel):
     created_at: datetime
     admin_id: int
     client_id: int
-    workout: List[Workout]
 
     class Config:
         orm_mode = True
