@@ -62,13 +62,12 @@ class Workout(WorkoutBase):
 
 
 class WorkoutOut(BaseModel):
-    id: int
+    video_url: str
     name: str
-    set = int
-    rep = int
-    video_url = str
-    image_url = str
-    routine_id = int
+    set: int
+    rep: int
+    id: int
+    image_url: str
 
     class Config:
         orm_mode = True

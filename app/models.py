@@ -1,5 +1,5 @@
 from pydantic import EmailStr
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, func
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, func, ForeignKeyConstraint
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP, INTEGER, VARCHAR, DateTime
@@ -10,7 +10,7 @@ from .database import Base
 class Admin(Base):
     __tablename__ = 'admin'
     id = Column(Integer, primary_key=True)
-    username = Column(String , unique=True)
+    username = Column(String, unique=True)
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),
@@ -27,7 +27,7 @@ class Client(Base):
     name = Column(String)
     lastname = Column(String)
     email = Column(String, nullable=False, unique=True)
-    password = Column(String , nullable=False)
+    password = Column(String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     admins = relationship(
         'Admin',
@@ -39,11 +39,11 @@ class Routine(Base):
     __tablename__ = 'routine'
     admin_id = Column(Integer, ForeignKey('admin.id'), primary_key=True)
     client_id = Column(Integer, ForeignKey('client.id'), primary_key=True)
-    name = Column(String, unique=True)
+    name = Column(String, primary_key=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
     admins = relationship(Admin, backref=backref("client_assoc"))
     clients = relationship(Client, backref=backref("admins_assoc"))
-    workouts = relationship("Workout", back_populates="routine_creator")
+
 
 
 class Workout(Base):
@@ -54,5 +54,8 @@ class Workout(Base):
     rep = Column(Integer, nullable=True)
     video_url = Column(String, nullable=True)
     image_url = Column(String, nullable=True)
-    routine_creator = relationship(Routine, back_populates="workouts")
-    routine_id = Column(String, ForeignKey('routine.name'))
+    routine_admin = Column(Integer)
+    routine_client = Column(Integer)
+    routine_name = Column(String)
+    __table_args__ = (ForeignKeyConstraint([routine_admin, routine_client, routine_name],
+                                           [Routine.admin_id, Routine.client_id, Routine.name]), {})

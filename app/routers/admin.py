@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
-from .. import models, schemas, utils
+from .. import models, schemas, utils, oauth2
 from ..database import get_db
 
 router = APIRouter(
@@ -24,7 +24,7 @@ def create_admin(user: schemas.AdminCreate, db: Session = Depends(get_db)):
 
 
 @router.get('/{id}', response_model=schemas.AdminOut)
-def get_admin(id: int, db: Session = Depends(get_db), ):
+def get_admin(id: int, db: Session = Depends(get_db) ):
     user = db.query(models.Admin).filter(models.Admin.id == id).first()
 
     if not user:
@@ -32,6 +32,3 @@ def get_admin(id: int, db: Session = Depends(get_db), ):
                             detail=f"User with id: {id} does not exist")
 
     return user
-
-
-
